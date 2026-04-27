@@ -1,0 +1,18 @@
+<nav class="navbar">
+    <a href="/" class="nav-logo">
+        <div class="nav-logo-icon">🔗</div>
+        <span class="nav-logo-text">BlockCert</span>
+    </a>
+    <div class="nav-links">
+        <a href="/">Verify</a>
+        <a href="/verifier">Verifier</a>
+        <a href="/history">History</a>
+        {% if session.admin %}
+        <a href="/issue">Issue</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="nav-danger">Logout</a>
+        {% else %}
+        <a href="/admin">Admin</a>
+        {% endif %}
+    </div>
+</nav>

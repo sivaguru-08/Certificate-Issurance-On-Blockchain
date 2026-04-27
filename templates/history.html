@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>BlockCert — Verification History</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    <div class="container" style="max-width: 620px;">
+        <h2>📜 Verification History</h2>
+        <p class="subtitle">All certificate checks performed on the blockchain.</p>
+
+        {% if records %}
+        <div style="text-align: left; max-height: 480px; overflow-y: auto; padding-right: 4px;">
+            {% for r in records %}
+            <div class="history-card">
+                <div class="history-header">
+                    <span class="history-hash">{{ r.hash[:12] }}…</span>
+                    <span class="history-time">🕐 {{ r.time }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px; color: var(--text-muted);">Status:</span>
+                    {% if r.status == 'Valid' %}
+                    <span class="badge badge-valid" style="font-size: 11px; padding: 2px 10px;">✔ Valid</span>
+                    {% else %}
+                    <span class="badge badge-invalid" style="font-size: 11px; padding: 2px 10px;">✘ Invalid</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="padding: 40px 0; color: var(--text-muted); text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 12px;">🔎</div>
+            <p>No verification history yet.</p>
+        </div>
+        {% endif %}
+
+        <a href="/" class="link" style="margin-top: 24px;">← Back to Verify</a>
+    </div>
+</body>
+
+</html>

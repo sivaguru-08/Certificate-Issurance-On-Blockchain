@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>BlockCert — Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    <div class="container" style="max-width: 600px;">
+        <h2>📊 Dashboard</h2>
+        <p class="subtitle">Real-time analytics from the blockchain registry.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px;">
+            <div class="metric-card">
+                <span class="metric-icon">🏅</span>
+                <div class="metric-value">{{ total_certificates }}</div>
+                <div class="metric-label">Issued Certs</div>
+            </div>
+            <div class="metric-card">
+                <span class="metric-icon">🔍</span>
+                <div class="metric-value">{{ total_verifications }}</div>
+                <div class="metric-label">Verifications</div>
+            </div>
+            <div class="metric-card" style="border-left: 3px solid var(--success);">
+                <span class="metric-icon">✅</span>
+                <div class="metric-value" style="color: var(--success);">{{ valid }}</div>
+                <div class="metric-label">Valid Checks</div>
+            </div>
+            <div class="metric-card" style="border-left: 3px solid var(--error);">
+                <span class="metric-icon">❌</span>
+                <div class="metric-value" style="color: var(--error);">{{ invalid }}</div>
+                <div class="metric-label">Invalid Checks</div>
+            </div>
+        </div>
+
+        <!-- Validity Rate Bar -->
+        {% if total_verifications > 0 %}
+        {% set rate = (valid / total_verifications * 100) | round(1) %}
+        <div style="text-align: left; margin-bottom: 28px;">
+            <div
+                style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500;">
+                <span>Validity Rate</span>
+                <span style="color: var(--success);">{{ rate }}%</span>
+            </div>
+            <div style="height: 6px; background: rgba(255,255,255,0.08); border-radius: 99px; overflow: hidden;">
+                <div
+                    style="height: 100%; width: {{ rate }}%; background: linear-gradient(90deg, var(--success), #6ee7b7); border-radius: 99px; transition: width 1s ease;">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="/issue" class="link" style="margin: 0;">Issue Certificate →</a>
+            <a href="/history" class="link" style="margin: 0;">View History →</a>
+        </div>
+    </div>
+</body>
+
+</html>

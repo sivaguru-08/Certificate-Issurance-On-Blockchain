@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Download Certificate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+    <div class="container">
+        <h2>Download Success</h2>
+        <p class="subtitle">Your official certificate is ready.</p>
+
+        <div style="margin: 30px 0;">
+            <img src="/static/certificate_qr.png" width="100"
+                style="border-radius: 8px; margin-bottom: 20px; opacity: 0.8; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <p class="text-muted" style="font-size: 14px;">Click below to save the PDF file to your device.</p>
+        </div>
+
+        <form action="/download" method="post">
+            <input type="hidden" name="hash" value="{{ cert_hash }}">
+            <button type="submit">Download PDF Now</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

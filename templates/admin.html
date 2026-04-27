@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>BlockCert — Admin Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    <div class="container" style="max-width: 560px;">
+
+        {% if not session.admin %}
+        <!-- ===== LOGIN ===== -->
+        <div style="margin-bottom: 28px;">
+            <div
+                style="width: 52px; height: 52px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 20px;">
+                🔐</div>
+            <h2>Admin Portal</h2>
+            <p class="subtitle">Secure login for certificate authorities only.</p>
+        </div>
+        <form method="post" action="/admin">
+            <input type="text" name="username" placeholder="Username" required autocomplete="off">
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+        </form>
+
+        {% else %}
+        <!-- ===== ISSUE CERTIFICATE ===== -->
+        <div style="margin-bottom: 24px;">
+            <h2>Issue Certificate</h2>
+            <p class="subtitle">Mint a new immutable credential on the blockchain.</p>
+        </div>
+
+        <form method="post" action="/issue" class="text-left" enctype="multipart/form-data">
+
+            <div class="section-label">Student Details</div>
+            <div class="grid-2">
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="text" name="year" placeholder="Year" required>
+            </div>
+
+            <input type="text" name="institution" placeholder="Institution Name" required>
+            <input type="text" name="course" placeholder="Course / Program" required>
+
+            <div class="section-label">Academic Record</div>
+            <div class="grid-2">
+                <input type="number" name="percentage" placeholder="Percentage (%)" min="0" max="100" step="0.01"
+                    required>
+                <input type="text" name="cgpa" placeholder="CGPA (optional)">
+            </div>
+
+            <div class="section-label">Contact</div>
+            <input type="email" name="email" placeholder="Student Email Address" required>
+
+            <div class="section-label">Certificate PDF</div>
+            <input type="file" name="certificate_pdf" accept="application/pdf" required>
+
+            <button type="submit" style="margin-top: 24px;">⛏ Mint Certificate</button>
+        </form>
+
+        {% if message %}
+        <div class="alert alert-success" style="margin-top: 20px; text-align: center;">
+            ✅ {{ message }}
+        </div>
+        {% endif %}
+
+        {% if issued_hash %}
+        <div
+            style="margin-top: 16px; padding: 18px 20px; background: var(--success-bg); border: 1px solid var(--success-border); border-radius: var(--radius-md); width: 100%; box-sizing: border-box;">
+            <p
+                style="margin: 0 0 10px 0; font-size: 12px; color: var(--success); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                📋 Certificate Hash — share for verification
+            </p>
+            <div style="display: flex; align-items: stretch; gap: 10px;">
+                <code id="cert-hash" style="
+                    flex: 1;
+                    font-size: 12px;
+                    word-break: break-all;
+                    color: var(--success);
+                    background: rgba(0,0,0,0.3);
+                    padding: 10px 14px;
+                    border-radius: var(--radius-sm);
+                    display: block;
+                    line-height: 1.7;
+                    border: 1px solid var(--success-border);
+                    font-family: 'JetBrains Mono', monospace;
+                ">{{ issued_hash }}</code>
+                <button type="button" onclick="copyHash()" style="
+                    padding: 0 18px;
+                    font-size: 13px;
+                    min-width: 84px;
+                    margin: 0;
+                    border-radius: var(--radius-sm);
+                    align-self: stretch;
+                    background: var(--success);
+                    box-shadow: 0 4px 12px rgba(52,211,153,0.3);
+                ">Copy</button>
+            </div>
+            <p style="margin: 10px 0 0; font-size: 12px; color: var(--text-muted);">
+                Paste this on the <a href="/verifier"
+                    style="color: var(--success); text-decoration: underline;">Verifier page</a> to confirm the
+                certificate.
+            </p>
+        </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <a href="/dashboard" class="link" style="margin: 0;">Dashboard →</a>
+            <a href="/logout" class="link" style="margin: 0; color: var(--error); opacity: 0.75;">Logout</a>
+        </div>
+
+        {% endif %}
+    </div>
+
+    <script>
+        function copyHash() {
+            const hash = document.getElementById('cert-hash').innerText.trim();
+            navigator.clipboard.writeText(hash).then(() => {
+                const btn = document.querySelector('[onclick="copyHash()"]');
+                btn.innerText = '✓ Copied';
+                setTimeout(() => btn.innerText = 'Copy', 2200);
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>BlockCert — Verifier Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% include "navbar.html" %}
+
+    <div class="container" style="max-width: 620px;">
+        <h2>🏢 Verifier Portal</h2>
+        <p class="subtitle">Corporate & institutional verification of blockchain credentials.</p>
+
+        <form method="post" style="display: flex; gap: 10px; align-items: stretch;">
+            <input name="hash" placeholder="Enter Certificate Hash" required style="margin: 0; flex: 1;">
+            <button type="submit" style="margin: 0; width: auto; padding: 0 24px; white-space: nowrap;">Check</button>
+        </form>
+
+        {% if result %}
+
+        {% if result.error %}
+        <div class="alert alert-error" style="margin-top: 20px;">⚠️ {{ result.error }}</div>
+
+        {% elif result.valid %}
+
+        <!-- Verified Badge Header -->
+        <div style="text-align: center; margin-top: 24px; margin-bottom: 4px;">
+            <span class="badge badge-valid"
+                style="font-size: 14px; padding: 8px 20px; box-shadow: 0 0 20px rgba(52,211,153,0.2);">
+                ✔ Verified Authentic
+            </span>
+        </div>
+
+        <!-- Details Card -->
+        {% if result.student %}
+        <div class="certificate-card" style="margin-top: 20px;">
+            <div class="cert-row"><span class="cert-label">Student Name</span><span class="cert-value">{{
+                    result.student.name }}</span></div>
+            <div class="cert-row"><span class="cert-label">Course</span><span class="cert-value">{{
+                    result.student.course }}</span></div>
+            <div class="cert-row"><span class="cert-label">Institution</span><span class="cert-value">{{
+                    result.student.institution }}</span></div>
+            <div class="cert-row"><span class="cert-label">Year</span><span class="cert-value">{{ result.student.year
+                    }}</span></div>
+            <div class="cert-row"><span class="cert-label">Percentage</span><span class="cert-value">{{
+                    result.student.percentage }}%</span></div>
+            {% if result.student.grade %}
+            <div class="cert-row"><span class="cert-label">Grade</span><span class="cert-value">{{ result.student.grade
+                    }} — {{ result.student['class'] }}</span></div>
+            {% endif %}
+            <div class="cert-row"><span class="cert-label">Issued</span><span class="cert-value">{{ result.issued_at
+                    }}</span></div>
+
+            <div
+                style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9; font-size: 12px; color: #94a3b8; word-break: break-all;">
+                <b style="color: #64748b;">Issuer Wallet:</b><br>
+                <code style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">{{ result.issuer }}</code>
+            </div>
+        </div>
+
+        <!-- Digital Certificate View -->
+        <div class="digital-cert-container">
+            <div class="cert-inner-border">
+                <div class="cert-header">Certificate of Completion</div>
+                <div class="cert-subheader">This is to certify that</div>
+                <div class="cert-student-name">{{ result.student.name }}</div>
+                <div class="cert-body-text">has successfully completed</div>
+                <div class="cert-course-name">{{ result.student.course }}</div>
+                <div class="cert-body-text">at <b>{{ result.student.institution }}</b></div>
+
+                <div class="cert-details-grid">
+                    <div>
+                        <span
+                            style="display:block; font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">Year</span>
+                        <span style="font-weight:700; font-size:16px;">{{ result.student.year }}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span
+                            style="display:block; font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">Grade</span>
+                        <span style="font-weight:700; font-size:16px;">{{ result.student.grade }} ({{
+                            result.student.percentage }}%)</span>
+                    </div>
+                </div>
+
+                <div class="cert-footer">
+                    <div style="text-align:left;">
+                        <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px;">
+                            Issued by</div>
+                        <div style="font-weight:700; margin-top:4px; font-size:15px;">{{ result.student.institution }}
+                        </div>
+                        <div style="font-size:11px; color:#94a3b8; margin-top:2px;">{{ result.issued_at }}</div>
+                    </div>
+                    <div class="cert-seal">Officially<br>Verified<br>On-Chain</div>
+                </div>
+
+                <div style="margin-top: 20px; border-top: 1px dotted #e2e8f0; padding-top: 12px;">
+                    <div style="font-size: 10px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px;">
+                        Blockchain Secured</div>
+                    <div class="cert-hash-small">{{ result.issuer }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Preview -->
+        {% if result.student.pdf_path %}
+        <div style="margin-top: 28px;">
+            <h3 style="color: var(--text); margin-bottom: 12px; text-align:center;">📄 Official Certificate Document
+            </h3>
+            <embed src="/{{ result.student.pdf_path }}" type="application/pdf" width="100%" height="580px"
+                style="border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+            <a href="/{{ result.student.pdf_path }}" download="Certificate.pdf"
+                style="display: block; text-align: center; margin-top: 12px; color: var(--accent); font-size: 14px; font-weight: 600; text-decoration: none;">
+                ⬇ Download PDF
+            </a>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {% else %}
+        <div class="alert alert-error" style="margin-top: 20px; text-align: center;">
+            <div style="font-size: 28px; margin-bottom: 8px;">❌</div>
+            <strong>Invalid or Fake Certificate</strong>
+            <p style="margin-top: 6px; opacity: 0.8; font-size: 13px;">This hash does not exist on the blockchain.</p>
+        </div>
+        {% endif %}
+
+        {% endif %}
+    </div>
+</body>
+
+</html>
